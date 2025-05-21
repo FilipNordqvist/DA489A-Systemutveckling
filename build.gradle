@@ -1,0 +1,57 @@
+plugins {
+    id 'java'
+}
+
+group = 'org.svexasHoldem'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+compileJava.options.encoding = 'UTF-8'
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+// Run the client and server
+tasks.register('runClient', JavaExec) {
+    mainClass.set('org.svexasHoldem.client.ClientStart')
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+tasks.register('runServer', JavaExec) {
+    mainClass.set('org.svexasHoldem.server.ServerStart')
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+// Create a JAR file for the client and server
+tasks.register('jarClient', Jar) {
+    from sourceSets.main.output
+
+    manifest {
+        attributes 'Main-Class': 'org.svexasHoldem.client.ClientStart'
+    }
+    archiveBaseName.set('client')
+}
+
+tasks.register('jarServer', Jar) {
+    from sourceSets.main.output
+    manifest {
+        attributes 'Main-Class': 'org.svexasHoldem.server.ServerStart'
+    }
+    archiveBaseName.set('server')
+}
+
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.9.1')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testImplementation 'org.mockito:mockito-core:3.5.13'
+
+}
+
+test {
+    useJUnitPlatform()
+}
